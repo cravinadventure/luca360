@@ -149,6 +149,15 @@ nav {
 .vert-card:hover img {
   filter: brightness(.65) saturate(.9);
 }
+/* Horizontal parallax panning card */
+.vert-card.pano-card img {
+  width: 300%; height: 150%; top: -25%; left: 0;
+  object-fit: cover;
+  filter: brightness(.6) saturate(.8);
+}
+.vert-card.pano-card:hover img {
+  filter: brightness(.75) saturate(.95);
+}
 .vert-card-overlay {
   position: absolute; inset: 0;
   background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 60%);
@@ -396,8 +405,8 @@ footer {
         <p>Transparency that drives upgrades</p>
       </div>
     </div>
-    <div class="vert-card reveal">
-      <img src="https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=800&q=80" alt="Restaurants & Bars">
+    <div class="vert-card pano-card reveal">
+      <img src="buddakan-pano.jpg" alt="Restaurants & Bars">
       <div class="vert-card-overlay">
         <h3>Restaurants & Bars</h3>
         <p>Step inside before you reserve</p>
@@ -519,8 +528,15 @@ function parallax() {
     const rect = card.getBoundingClientRect();
     if (rect.bottom < 0 || rect.top > vh) return;
     const progress = (rect.top + rect.height / 2) / vh;
-    const shift = (progress - 0.5) * 20;
-    card.querySelector('img').style.transform = `translateY(${shift}%)`;
+    const img = card.querySelector('img');
+    if (card.classList.contains('pano-card')) {
+      // Horizontal parallax: starts at far left, slides right as you scroll past
+      const hShift = (1 - progress) * -75;
+      img.style.transform = `translateX(${hShift}%)`;
+    } else {
+      const shift = (progress - 0.5) * 20;
+      img.style.transform = `translateY(${shift}%)`;
+    }
   });
 }
 window.addEventListener('scroll', parallax, { passive: true });
