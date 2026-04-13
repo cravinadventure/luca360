@@ -24,9 +24,13 @@ body {
 
 /* ── BOTTOM CTA ── */
 .bottom-cta {
-  position: fixed; bottom: 4rem; left: 0; right: 0; z-index: 10;
-  display: flex; justify-content: center;
+  position: fixed; bottom: 5.5rem; left: 0; right: 0; z-index: 10;
+  display: flex; flex-direction: column; align-items: center; gap: 1rem;
   pointer-events: none;
+}
+.bottom-brand {
+  font-size: 1.1rem; font-weight: 700; letter-spacing: -.01em;
+  color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.5);
 }
 .exit-btn {
   padding: .55rem 1.6rem;
@@ -54,6 +58,7 @@ body {
 
 <!-- BOTTOM EXIT BUTTON -->
 <div class="bottom-cta">
+  <div class="bottom-brand">LUCA360°</div>
   <a class="exit-btn" href="index.html">EXIT LIVE DEMO</a>
 </div>
 
