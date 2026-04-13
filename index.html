@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LUCA360°</title>
 <link href="https://fonts.cdnfonts.com/css/gilroy-bold" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
-<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
@@ -16,103 +14,35 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── PANORAMA ── */
-#pano {
+/* ── GOOGLE MAPS STREET VIEW ── */
+.streetview {
   position: fixed; inset: 0; z-index: 0;
 }
-#pano::after {
-  content: ''; position: absolute; inset: 0; z-index: 1;
-  background: rgba(0,0,0,.45);
+.streetview iframe {
+  width: 100%; height: 100%; border: none;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .8rem 1.2rem;
+  background: linear-gradient(to bottom, rgba(0,0,0,.6) 0%, transparent 100%);
   pointer-events: none;
 }
-/* Hide Pannellum default UI */
-.pnlm-controls-container, .pnlm-load-button, .pnlm-about-msg,
-.pnlm-error-msg, .pnlm-load-box, .pnlm-compass { display: none !important; }
-
-/* ── HAMBURGER ── */
-.hamburger {
-  position: fixed; top: 1.2rem; right: 1.2rem; z-index: 99999;
-  background: none; border: none; cursor: pointer; padding: 8px;
-  display: flex; flex-direction: column; gap: 5px;
-}
-.hamburger span {
-  display: block; width: 24px; height: 2px;
-  background: #f5f5f7; border-radius: 2px;
-  transition: all .3s;
-}
-.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-.hamburger.open span:nth-child(2) { opacity: 0; }
-.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-
-/* ── MENU PANEL ── */
-.menu {
-  position: fixed; inset: 0; z-index: 9998;
-  background: rgba(0,0,0,.88); backdrop-filter: blur(30px);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 0;
-  opacity: 0; pointer-events: none; transition: opacity .3s;
-}
-.menu.open { opacity: 1; pointer-events: auto; }
-.menu-item {
-  background: none; border: none; color: rgba(255,255,255,.5);
-  font-family: inherit; font-size: 1.3rem; font-weight: 500;
-  padding: 1rem 2rem; cursor: pointer;
-  transition: color .2s;
-  width: 100%; text-align: center;
-}
-.menu-item:hover { color: #f5f5f7; }
-.menu-item.active { color: #f5f5f7; }
-
-/* ── CONTENT OVERLAY ── */
-.content {
-  position: fixed; inset: 0; z-index: 10;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  text-align: center; padding: 2rem;
-  pointer-events: none;
-  transition: opacity .3s;
-}
-.content > * { pointer-events: auto; }
-.title {
-  font-size: clamp(2.8rem, 9vw, 5.5rem);
-  font-weight: 800; letter-spacing: -.02em;
-  line-height: 1;
-  text-shadow: 0 2px 40px rgba(0,0,0,.5);
-}
-.tagline {
-  font-size: clamp(1rem, 2.5vw, 1.3rem);
-  font-weight: 500; color: rgba(255,255,255,.7);
-  margin-top: .6rem;
-  text-shadow: 0 1px 20px rgba(0,0,0,.5);
+.topbar > * { pointer-events: auto; }
+.logo {
+  font-size: 1.1rem; font-weight: 800; letter-spacing: -.01em;
+  text-shadow: 0 1px 10px rgba(0,0,0,.5);
 }
 .cta {
-  display: inline-block; margin-top: 1rem;
-  padding: .65rem 1.8rem;
+  padding: .45rem 1.2rem;
   background: #f5f5f7; color: #000;
-  font-family: inherit; font-size: .82rem; font-weight: 500;
+  font-family: inherit; font-size: .72rem; font-weight: 500;
   border: none; border-radius: 100px;
-  text-decoration: none; cursor: pointer;
-  transition: background .2s;
+  text-decoration: none; cursor: pointer; transition: background .2s;
 }
 .cta:hover { background: #c9863a; }
-
-/* ── CURRENT LABEL ── */
-.current-label {
-  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-  font-size: .7rem; font-weight: 400; letter-spacing: .1em;
-  color: rgba(255,255,255,.35); z-index: 10;
-  transition: opacity .5s;
-  text-transform: uppercase;
-}
-
-/* ── GYRO PROMPT ── */
-.gyro-prompt {
-  position: fixed; bottom: 3.5rem; left: 50%; transform: translateX(-50%);
-  font-size: .65rem; color: rgba(255,255,255,.25); z-index: 10;
-  letter-spacing: .06em;
-  animation: fadeInOut 4s ease forwards;
-}
-@keyframes fadeInOut { 0% { opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
 
 /* ── QUOTE MODAL ── */
 .modal-overlay {
@@ -130,14 +60,8 @@ body {
   position: relative;
 }
 .modal-overlay.open .modal { transform: scale(1) translateY(0); }
-.modal h2 {
-  font-size: 1.4rem; font-weight: 500; letter-spacing: -.02em;
-  margin-bottom: .4rem; color: #f5f5f7;
-}
-.modal p {
-  font-size: .82rem; font-weight: 300; color: rgba(255,255,255,.5);
-  margin-bottom: 1.8rem;
-}
+.modal h2 { font-size: 1.4rem; font-weight: 500; letter-spacing: -.02em; margin-bottom: .4rem; }
+.modal p { font-size: .82rem; font-weight: 300; color: rgba(255,255,255,.5); margin-bottom: 1.8rem; }
 .modal .close {
   position: absolute; top: 1.2rem; right: 1.2rem;
   background: none; border: none; color: rgba(255,255,255,.4);
@@ -175,33 +99,21 @@ body {
 </head>
 <body>
 
-<!-- 360° PANORAMA VIEWER -->
-<div id="pano"></div>
-
-<!-- HAMBURGER -->
-<button class="hamburger" id="hamburger">
-  <span></span><span></span><span></span>
-</button>
-
-<!-- MENU -->
-<div class="menu" id="menu">
-  <button class="menu-item active" data-index="0">Real Estate</button>
-  <button class="menu-item" data-index="1">Airbnb & Rentals</button>
-  <button class="menu-item" data-index="2">Commercial</button>
-  <button class="menu-item" data-index="3">Event Venues</button>
-  <button class="menu-item" data-index="4">Hotels</button>
-  <button class="menu-item" data-index="5">Restaurants & Bars</button>
+<!-- FULLSCREEN GOOGLE STREET VIEW -->
+<div class="streetview">
+  <iframe
+    src="https://www.google.com/maps/embed?pb=!4v!6m8!1m7!1sCJ-_O5OcKn1Q-dcGIFpYRw!2m2!1d38.897582!2d-77.036616!3f24!4f0!5f0.7820865974627469"
+    allowfullscreen
+    loading="eager"
+    referrerpolicy="no-referrer-when-downgrade">
+  </iframe>
 </div>
 
-<!-- CONTENT -->
-<div class="content" id="content">
-  <h1 class="title">LUCA360°</h1>
-  <p class="tagline">Immersive tours for every space.</p>
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">LUCA360°</div>
   <a class="cta" id="openQuote">Get a Quote</a>
 </div>
-
-<!-- CURRENT LABEL -->
-<div class="current-label" id="label">Real Estate</div>
 
 <!-- QUOTE MODAL -->
 <div class="modal-overlay" id="overlay">
@@ -234,104 +146,12 @@ body {
 </div>
 
 <script>
-// 360° scenes — equirectangular panoramas
-const scenes = [
-  { name: 'Real Estate',        image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/small_empty_house.jpg', pitch: 0, yaw: 120 },
-  { name: 'Airbnb & Rentals',   image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/lythwood_room.jpg', pitch: -5, yaw: 0 },
-  { name: 'Commercial',         image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/artist_workshop.jpg', pitch: 0, yaw: 240 },
-  { name: 'Event Venues',       image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/ballroom.jpg', pitch: 10, yaw: 90 },
-  { name: 'Hotels',             image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/hotel_room.jpg', pitch: 0, yaw: 30 },
-  { name: 'Restaurants & Bars', image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/st_fagans_interior.jpg', pitch: -10, yaw: 180 },
-];
-
-let current = 0;
-let viewer = null;
-
-function initViewer(i) {
-  const s = scenes[i];
-  if (viewer) viewer.destroy();
-  viewer = pannellum.viewer('pano', {
-    type: 'equirectangular',
-    panorama: s.image,
-    autoLoad: true,
-    showControls: false,
-    compass: false,
-    mouseZoom: false,
-    keyboardZoom: false,
-    disableKeyboardCtrl: true,
-    hfov: 110,
-    pitch: s.pitch,
-    yaw: s.yaw,
-    autoRotate: -1.5,
-    autoRotateInactivityDelay: 100,
-    orientationOnByDefault: true,
-    friction: 0.15,
-  });
-  // Update label
-  const label = document.getElementById('label');
-  label.style.opacity = '0';
-  setTimeout(() => { label.textContent = s.name; label.style.opacity = '1'; }, 300);
-}
-
-initViewer(0);
-
-// Hamburger menu
-const hamburger = document.getElementById('hamburger');
-const menu = document.getElementById('menu');
-const menuItems = document.querySelectorAll('.menu-item');
-const contentEl = document.getElementById('content');
-
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('open');
-  menu.classList.toggle('open');
-});
-
-menuItems.forEach(item => {
-  item.addEventListener('click', () => {
-    const idx = parseInt(item.dataset.index);
-    if (idx === current) {
-      hamburger.classList.remove('open');
-      menu.classList.remove('open');
-      return;
-    }
-    menuItems[current].classList.remove('active');
-    item.classList.add('active');
-    current = idx;
-    initViewer(idx);
-    hamburger.classList.remove('open');
-    menu.classList.remove('open');
-  });
-});
-
-// Gyro prompt on mobile
-if ('DeviceOrientationEvent' in window) {
-  const prompt = document.createElement('div');
-  prompt.className = 'gyro-prompt';
-  prompt.textContent = 'Move your phone to look around';
-  document.body.appendChild(prompt);
-
-  // iOS 13+ requires permission
-  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-    document.addEventListener('click', function enableGyro() {
-      DeviceOrientationEvent.requestPermission().then(r => {
-        if (r === 'granted' && viewer) viewer.startOrientation();
-      }).catch(() => {});
-      document.removeEventListener('click', enableGyro);
-    }, { once: true });
-  }
-}
-
 // Modal
 const overlay = document.getElementById('overlay');
 document.getElementById('openQuote').addEventListener('click', e => {
-  e.preventDefault();
-  overlay.classList.add('open');
-  contentEl.style.opacity = '0';
+  e.preventDefault(); overlay.classList.add('open');
 });
-function closeModal() {
-  overlay.classList.remove('open');
-  contentEl.style.opacity = '1';
-}
+function closeModal() { overlay.classList.remove('open'); }
 document.getElementById('closeQuote').addEventListener('click', closeModal);
 overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 </script>
