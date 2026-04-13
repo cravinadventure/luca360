@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>LUCA360° — Live Demo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUCA360° — Demo Mode</title>
 <link href="https://fonts.cdnfonts.com/css/gilroy-bold" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,142 +14,48 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-#street-view { position: fixed; inset: 0; z-index: 0; }
+/* ── GOOGLE MAPS STREET VIEW ── */
+.streetview {
+  position: fixed; inset: 0; z-index: 0;
+}
+.streetview iframe {
+  width: 100%; height: 100%; border: none;
+}
 
+/* ── BOTTOM CTA ── */
 .bottom-cta {
   position: fixed; bottom: 4rem; left: 0; right: 0; z-index: 10;
-  display: flex; justify-content: center; gap: .8rem;
+  display: flex; justify-content: center;
   pointer-events: none;
 }
-.exit-btn, .gyro-btn {
+.exit-btn {
   padding: .55rem 1.6rem;
+  background: #38bdf8; color: #000;
   font-family: inherit; font-size: .8rem; font-weight: 600;
   border: none; border-radius: 100px;
-  text-decoration: none; cursor: pointer; transition: background .2s, opacity .2s;
+  text-decoration: none; cursor: pointer; transition: background .2s;
   letter-spacing: .03em; text-transform: uppercase;
   pointer-events: auto;
 }
-.exit-btn {
-  background: #38bdf8; color: #000;
-}
 .exit-btn:hover { background: #7dd3fc; }
-.gyro-btn {
-  background: transparent; color: #fff;
-  border: 1.5px solid rgba(255,255,255,.6);
-}
-.gyro-btn:hover { background: rgba(255,255,255,.1); }
-.gyro-btn.active {
-  background: #38bdf8; color: #000; border-color: #38bdf8;
-}
-.gyro-btn.hidden { display: none; }
 </style>
 </head>
 <body>
 
-<div id="street-view"></div>
-
-<div class="bottom-cta">
-  <button class="gyro-btn hidden" id="gyroBtn" onclick="toggleGyro()">Gyroscope</button>
-  <a class="exit-btn" href="index.html">EXIT LIVE DEMO</a>
+<!-- FULLSCREEN GOOGLE STREET VIEW -->
+<div class="streetview">
+  <iframe
+    src="https://www.google.com/maps/embed?pb=!4v1700000000000!6m8!1m7!1sCAoSFkNJSE0wb2dLRUlDQWdJRDR5cmZhUUE%3D!2m2!1d40.7422653!2d-74.0049731!3f119!4f-5!5f0.4"
+    allowfullscreen
+    loading="eager"
+    referrerpolicy="no-referrer-when-downgrade">
+  </iframe>
 </div>
 
-<script>
-let panorama;
-let gyroActive = false;
-let gyroSupported = false;
-let initialAlpha = null;
-let initialHeading = 0;
-
-function initStreetView() {
-  panorama = new google.maps.StreetViewPanorama(
-    document.getElementById('street-view'), {
-      pano: 'CAoSFkNJSE0wb2dLRUlDQWdJRDR5cmZhUUE',
-      pov: { heading: 119, pitch: -5 },
-      zoom: 0.4,
-      disableDefaultUI: false,
-      showRoadLabels: false,
-      motionTracking: false,
-      motionTrackingControl: false
-    }
-  );
-
-  // Check gyro support
-  if (window.DeviceOrientationEvent) {
-    gyroSupported = true;
-    document.getElementById('gyroBtn').classList.remove('hidden');
-  }
-}
-
-function toggleGyro() {
-  if (gyroActive) {
-    disableGyro();
-  } else {
-    enableGyro();
-  }
-}
-
-function enableGyro() {
-  // iOS 13+ requires permission
-  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-    DeviceOrientationEvent.requestPermission()
-      .then(function(state) {
-        if (state === 'granted') {
-          startGyro();
-        }
-      })
-      .catch(console.error);
-  } else {
-    startGyro();
-  }
-}
-
-function startGyro() {
-  gyroActive = true;
-  initialAlpha = null;
-  initialHeading = panorama.getPov().heading;
-  document.getElementById('gyroBtn').classList.add('active');
-  window.addEventListener('deviceorientation', handleOrientation);
-}
-
-function disableGyro() {
-  gyroActive = false;
-  initialAlpha = null;
-  document.getElementById('gyroBtn').classList.remove('active');
-  window.removeEventListener('deviceorientation', handleOrientation);
-}
-
-function handleOrientation(e) {
-  if (!panorama || !gyroActive) return;
-
-  var alpha = e.alpha; // 0-360 compass
-  var beta = e.beta;   // -180 to 180 front/back tilt
-  var gamma = e.gamma; // -90 to 90 left/right tilt
-
-  if (alpha === null) return;
-
-  // Set initial orientation on first reading
-  if (initialAlpha === null) {
-    initialAlpha = alpha;
-  }
-
-  // Calculate heading relative to initial position
-  var deltaAlpha = alpha - initialAlpha;
-  var heading = initialHeading - deltaAlpha;
-
-  // Normalize to 0-360
-  heading = ((heading % 360) + 360) % 360;
-
-  // Map beta (tilt) to pitch (-90 to 90)
-  var pitch = Math.max(-90, Math.min(90, beta - 90));
-
-  panorama.setPov({
-    heading: heading,
-    pitch: pitch
-  });
-}
-</script>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD8Q6vQjnuejOVghFHPATNtBQF9NODydhU&callback=initStreetView" async defer></script>
+<!-- BOTTOM EXIT BUTTON -->
+<div class="bottom-cta">
+  <a class="exit-btn" href="index.html">EXIT LIVE DEMO</a>
+</div>
 
 </body>
 </html>
