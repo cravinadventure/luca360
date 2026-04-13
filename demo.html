@@ -22,24 +22,6 @@ body {
   width: 100%; height: 100%; border: none;
 }
 
-/* ── CENTER BRANDING ── */
-.branding {
-  position: fixed; inset: 0; z-index: 10;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  pointer-events: none;
-}
-.brand-name {
-  font-size: 3rem; font-weight: 800; letter-spacing: -.02em;
-  text-shadow: 0 2px 20px rgba(0,0,0,.7);
-}
-.brand-slogan {
-  font-size: 1rem; font-weight: 400; letter-spacing: .02em;
-  color: rgba(255,255,255,.75);
-  margin-top: .4rem;
-  text-shadow: 0 1px 10px rgba(0,0,0,.7);
-}
-
 /* ── BOTTOM CTA ── */
 .bottom-cta {
   position: fixed; bottom: 4rem; left: 0; right: 0; z-index: 10;
@@ -48,13 +30,14 @@ body {
 }
 .exit-btn {
   padding: .55rem 1.6rem;
-  background: #f5f5f7; color: #000;
-  font-family: inherit; font-size: .8rem; font-weight: 500;
+  background: #38bdf8; color: #000;
+  font-family: inherit; font-size: .8rem; font-weight: 600;
   border: none; border-radius: 100px;
   text-decoration: none; cursor: pointer; transition: background .2s;
+  letter-spacing: .03em; text-transform: uppercase;
   pointer-events: auto;
 }
-.exit-btn:hover { background: #c9863a; }
+.exit-btn:hover { background: #7dd3fc; }
 </style>
 </head>
 <body>
@@ -69,15 +52,9 @@ body {
   </iframe>
 </div>
 
-<!-- CENTER BRANDING -->
-<div class="branding">
-  <div class="brand-name">LUCA360°</div>
-  <div class="brand-slogan">Immersive tours for every space.</div>
-</div>
-
 <!-- BOTTOM EXIT BUTTON -->
 <div class="bottom-cta">
-  <a class="exit-btn" href="index.html">Exit Demo Mode</a>
+  <a class="exit-btn" href="index.html">EXIT LIVE DEMO</a>
 </div>
 
 </body>
