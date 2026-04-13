@@ -1,6 +1,6 @@
 # LUCA360°
 
-**Immersive tours for every space.**
+**Immersive tours for every industry.**
 
 LUCA360° is a spatial production company by [Cravin' Adventure Studios](https://github.com/cravinadventure) that creates 360° virtual tours for businesses across six verticals:
 
@@ -17,10 +17,12 @@ LUCA360° is a spatial production company by [Cravin' Adventure Studios](https:/
 
 ## Design
 
-- Single-screen, no-scroll layout
-- Fullscreen background images cycle through all six verticals
+- Scrolling landing page with 360° panorama hero background
+- Industry cards in 16:9 landscape format
+- Light blue accent color
 - Gilroy font sitewide
-- "Get a Quote" modal popup with contact form
+- "Get a Quote" modal popup with contact form (sends via mailto)
+- Live demo page with embedded Google Street View walkthrough
 - Pure black background with white text
 - Minimal, Apple-inspired aesthetic
 

@@ -10,7 +10,7 @@
 :root {
   --bg: #000;
   --surface: #111;
-  --accent: #c9863a;
+  --accent: #38bdf8;
   --white: #f5f5f7;
   --gray1: rgba(255,255,255,.86);
   --gray2: rgba(255,255,255,.56);
@@ -46,7 +46,7 @@ nav {
   color: var(--accent); text-decoration: none; font-size: .75rem;
   font-weight: 400; transition: color .2s;
 }
-.nav-cta:hover { color: #e8b96a; }
+.nav-cta:hover { color: #cccccc; }
 .hamburger { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; padding: 6px; }
 .hamburger span { display: block; width: 18px; height: 1px; background: var(--white); transition: all .3s; }
 .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(3.5px,3.5px); }
@@ -137,7 +137,7 @@ nav {
 }
 .vert-card {
   position: relative; border-radius: 20px; overflow: hidden;
-  aspect-ratio: 4/3; cursor: pointer;
+  aspect-ratio: 16/9; cursor: pointer;
 }
 .vert-card img {
   width: 100%; height: 130%; object-fit: cover;
@@ -145,18 +145,6 @@ nav {
   transition: filter .5s;
   filter: brightness(.5) saturate(.7);
   will-change: transform;
-}
-.vert-card:hover img {
-  filter: brightness(.65) saturate(.9);
-}
-/* Horizontal parallax panning card */
-.vert-card.pano-card img {
-  width: 300%; height: 150%; top: -25%; left: 0;
-  object-fit: cover;
-  filter: brightness(.6) saturate(.8);
-}
-.vert-card.pano-card:hover img {
-  filter: brightness(.75) saturate(.95);
 }
 .vert-card-overlay {
   position: absolute; inset: 0;
@@ -169,9 +157,8 @@ nav {
 }
 .vert-card p {
   font-size: .78rem; color: var(--gray2); margin-top: .25rem; font-weight: 300;
-  opacity: 0; transform: translateY(6px); transition: all .35s;
+  opacity: 1;
 }
-.vert-card:hover p { opacity: 1; transform: translateY(0); }
 
 /* ── PROCESS ── */
 .process {
@@ -209,43 +196,57 @@ nav {
   padding: 8rem 2rem;
 }
 .pricing-inner { max-width: 980px; margin: 0 auto; text-align: center; }
-.tier-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
-  margin-top: 4rem; background: rgba(255,255,255,.04); border-radius: 20px; overflow: hidden;
+.quote-btn {
+  display: inline-block; margin-top: 1.5rem;
+  padding: .75rem 2.2rem; border-radius: 100px;
+  background: var(--accent); color: var(--bg);
+  font-size: .85rem; font-weight: 600; text-decoration: none;
+  letter-spacing: .02em; transition: background .2s; cursor: pointer; border: none;
 }
-.tier {
-  background: rgba(255,255,255,.02); padding: 2.8rem 2rem; text-align: left;
-  transition: background .3s;
-  position: relative;
+.quote-btn:hover { background: #cccccc; }
+.pricing-sub {
+  font-size: .95rem; color: var(--gray2); max-width: 480px; margin: 1.5rem auto 0;
+  line-height: 1.7; font-weight: 300;
 }
-.tier:hover { background: rgba(255,255,255,.04); }
-.tier.featured { background: rgba(255,255,255,.05); }
-.tier-badge {
-  display: inline-block; background: var(--accent); color: var(--bg);
-  font-size: .55rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
-  padding: .2rem .6rem; border-radius: 4px; margin-bottom: 1rem;
+/* Quote Modal */
+.quote-modal {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,.7); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center; padding: 1.5rem;
 }
-.tier h3 { font-size: 1.2rem; font-weight: 600; color: var(--white); margin-bottom: .4rem; letter-spacing: -.01em; }
-.tier-desc { font-size: .82rem; color: var(--gray2); margin-bottom: 1.5rem; line-height: 1.6; font-weight: 300; }
-.tier-features { list-style: none; margin-bottom: 2rem; }
-.tier-features li {
-  font-size: .8rem; color: var(--gray1); padding: .45rem 0;
-  border-bottom: 1px solid rgba(255,255,255,.04);
-  display: flex; align-items: center; gap: .5rem; font-weight: 300;
+.quote-modal.open { display: flex; }
+.quote-modal-inner {
+  background: #141414; border-radius: 20px; padding: 2.5rem 2rem;
+  max-width: 460px; width: 100%; position: relative;
 }
-.tier-features li::before { content: '\2713'; color: var(--accent); font-size: .6rem; font-weight: 600; }
-.tier-cta {
-  display: inline-block; padding: .55rem 1.4rem;
-  font-size: .78rem; font-weight: 400;
-  color: var(--accent); text-decoration: none;
-  transition: all .2s;
+.quote-modal-close {
+  position: absolute; top: 1rem; right: 1.2rem; background: none; border: none;
+  color: var(--gray3); font-size: 1.4rem; cursor: pointer; line-height: 1;
 }
-.tier-cta:hover { text-decoration: underline; }
-.tier.featured .tier-cta {
-  background: var(--accent); color: var(--bg); border-radius: 100px;
-  font-weight: 500; padding: .6rem 1.6rem;
+.quote-modal-close:hover { color: var(--white); }
+.quote-modal h3 {
+  font-size: 1.3rem; font-weight: 700; color: var(--white); margin-bottom: .4rem;
+  letter-spacing: -.02em;
 }
-.tier.featured .tier-cta:hover { background: #e8b96a; text-decoration: none; }
+.quote-modal p {
+  font-size: .8rem; color: var(--gray3); margin-bottom: 1.5rem; font-weight: 300;
+}
+.quote-field {
+  display: block; width: 100%; padding: .7rem 1rem; margin-bottom: .8rem;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px; color: var(--white); font-size: .85rem;
+  font-family: 'Gilroy', sans-serif; outline: none; transition: border-color .2s;
+}
+.quote-field:focus { border-color: var(--accent); }
+.quote-field::placeholder { color: var(--gray3); }
+select.quote-field { appearance: none; cursor: pointer; }
+.quote-submit {
+  width: 100%; padding: .75rem; margin-top: .5rem; border: none; border-radius: 100px;
+  background: var(--accent); color: var(--bg); font-size: .85rem; font-weight: 600;
+  font-family: 'Gilroy', sans-serif; cursor: pointer; letter-spacing: .02em;
+  transition: background .2s;
+}
+.quote-submit:hover { background: #cccccc; }
 
 /* ── CTA ── */
 .cta-section {
@@ -306,17 +307,23 @@ footer {
   .nav-links, .nav-cta { display: none; }
   .hamburger { display: flex; }
   .vert-grid { grid-template-columns: 1fr 1fr; }
-  .process-steps { grid-template-columns: repeat(2, 1fr); }
+  .process-steps { grid-template-columns: repeat(4, 1fr); }
   .p-step::after { display: none; }
-  .tier-grid { grid-template-columns: 1fr; max-width: 420px; margin: 4rem auto 0; border-radius: 20px; }
 }
 @media (max-width: 580px) {
   .vert-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
-  .vert-card { aspect-ratio: 9/16; }
-  .process-steps { grid-template-columns: 1fr 1fr; }
+  .vert-card { aspect-ratio: 16/9; }
+  .process-steps { grid-template-columns: 1fr; gap: 0; padding: 0 1.5rem; }
+  .p-step { padding: 1.5rem 0; text-align: left; display: block; }
+  .p-step-num { margin-bottom: .4rem; }
+  .p-step h3 { margin-bottom: .3rem; }
+  .p-step p { font-size: .8rem; }
+  .p-step::after { display: none !important; }
+  .p-step + .p-step { border-top: 1px solid rgba(255,255,255,.06); }
   .hero-logo { font-size: clamp(3.5rem, 16vw, 5.5rem); }
   nav { padding: 0 1rem; }
   .verticals, .process, .pricing, .cta-section { padding: 5rem 1.2rem; }
+  .section-headline em, .cta-section h2 em { display: block; }
 }
 </style>
 </head>
@@ -330,7 +337,7 @@ footer {
       <li><a href="#verticals">Industries</a></li>
       <li><a href="#process">Process</a></li>
       <li><a href="#pricing">Pricing</a></li>
-      <li><a href="demo.html" class="demo-link">Enter Demo Mode</a></li>
+      <li><a href="demo.html" class="demo-link">LIVE DEMO</a></li>
     </ul>
     <a href="#cta" class="nav-cta">Get a Quote</a>
     <button class="hamburger" id="hamburger" aria-label="Menu">
@@ -343,7 +350,7 @@ footer {
   <a href="#process" onclick="closeMenu()">Process</a>
   <a href="#pricing" onclick="closeMenu()">Pricing</a>
   <a href="#cta" onclick="closeMenu()" style="color:var(--white)">Get a Quote</a>
-  <a href="demo.html" class="demo-link">Enter Demo Mode</a>
+  <a href="demo.html" class="demo-link">LIVE DEMO</a>
 </div>
 
 <!-- HERO -->
@@ -367,7 +374,7 @@ footer {
 <section class="verticals" id="verticals">
   <div class="verticals-header reveal">
     <p class="section-label">What we capture</p>
-    <h2 class="section-headline">Immersive tours for <em>every space.</em></h2>
+    <h2 class="section-headline">Immersive tours for <em>every industry.</em></h2>
   </div>
   <div class="vert-grid">
     <div class="vert-card reveal">
@@ -385,7 +392,7 @@ footer {
       </div>
     </div>
     <div class="vert-card reveal">
-      <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80" alt="Commercial">
+      <img src="https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=800&q=80" alt="Commercial">
       <div class="vert-card-overlay">
         <h3>Commercial</h3>
         <p>Turn online curiosity into foot traffic</p>
@@ -405,8 +412,8 @@ footer {
         <p>Transparency that drives upgrades</p>
       </div>
     </div>
-    <div class="vert-card pano-card reveal">
-      <img src="buddakan-pano.jpg" alt="Restaurants & Bars">
+    <div class="vert-card reveal">
+      <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80" alt="Restaurants & Bars">
       <div class="vert-card-overlay">
         <h3>Restaurants & Bars</h3>
         <p>Step inside before you reserve</p>
@@ -449,44 +456,9 @@ footer {
 <section class="pricing" id="pricing">
   <div class="pricing-inner">
     <p class="section-label reveal">Pricing</p>
-    <h2 class="section-headline reveal">Simple. Transparent. <em>No surprises.</em></h2>
-    <div class="tier-grid">
-      <div class="tier reveal">
-        <h3>Ground Floor</h3>
-        <p class="tier-desc">The essentials. One scene, one link, ready to share.</p>
-        <ul class="tier-features">
-          <li>1 panoramic scene</li>
-          <li>Info hotspots</li>
-          <li>Embeddable link</li>
-          <li>Mobile optimized</li>
-        </ul>
-        <a href="#cta" class="tier-cta">Get Started ></a>
-      </div>
-      <div class="tier featured reveal">
-        <span class="tier-badge">Most Popular</span>
-        <h3>Full Floor Plan</h3>
-        <p class="tier-desc">Multi-room walkthrough with guided navigation.</p>
-        <ul class="tier-features">
-          <li>3–6 connected scenes</li>
-          <li>Floor-arrow navigation</li>
-          <li>Scene breadcrumbs</li>
-          <li>Compass & zoom</li>
-          <li>Priority processing</li>
-        </ul>
-        <a href="#cta" class="tier-cta">Get Started</a>
-      </div>
-      <div class="tier reveal">
-        <h3>Penthouse</h3>
-        <p class="tier-desc">Unlimited scenes. Every floor, every room, every angle.</p>
-        <ul class="tier-features">
-          <li>Unlimited scenes</li>
-          <li>Custom branding</li>
-          <li>Full walkthrough</li>
-          <li>Dedicated manager</li>
-        </ul>
-        <a href="#cta" class="tier-cta">Contact Us ></a>
-      </div>
-    </div>
+    <h2 class="section-headline reveal">Tailored to your space.</h2>
+    <p class="pricing-sub reveal">Every project is different. Tell us about your space and we'll send you a custom quote within 24 hours.</p>
+    <button class="quote-btn reveal" onclick="openQuote()">Get a Quote</button>
   </div>
 </section>
 
@@ -494,9 +466,33 @@ footer {
 <section class="cta-section" id="cta">
   <h2>Ready to let people <em>step inside?</em></h2>
   <p class="cta-sub">Let's build something immersive together.</p>
-  <a href="mailto:hello@luca360.com" class="cta-btn">Get a Quote</a>
-  <a href="demo.html" class="cta-link">Try the demo ></a>
+  <button class="cta-btn" onclick="openQuote()">Get a Quote</button>
+  <a href="demo.html" class="cta-link">Try live demo ></a>
 </section>
+
+<!-- QUOTE MODAL -->
+<div class="quote-modal" id="quoteModal">
+  <div class="quote-modal-inner">
+    <button class="quote-modal-close" onclick="closeQuote()">&times;</button>
+    <h3>Get a Quote</h3>
+    <p>Tell us about your space and we'll get back to you within 24 hours.</p>
+    <form id="quoteForm">
+      <input class="quote-field" type="text" name="name" placeholder="Your Name" required>
+      <input class="quote-field" type="email" name="email" placeholder="Email" required>
+      <input class="quote-field" type="tel" name="phone" placeholder="Phone Number">
+      <input class="quote-field" type="text" name="business" placeholder="Business Name" required>
+      <select class="quote-field" name="size" required>
+        <option value="" disabled selected>Estimated Space Size</option>
+        <option value="Small Shop / Office (under 3,000 sq ft)">Small Shop / Office (under 3,000 sq ft)</option>
+        <option value="Mid-Size Restaurant / Retail (3,000–10,000 sq ft)">Mid-Size Restaurant / Retail (3,000–10,000 sq ft)</option>
+        <option value="Large Commercial / Showroom (10,000–30,000 sq ft)">Large Commercial / Showroom (10,000–30,000 sq ft)</option>
+        <option value="Complex Campus / University (50,000+ sq ft)">Complex Campus / University (50,000+ sq ft)</option>
+      </select>
+      <textarea class="quote-field" name="message" placeholder="Anything else we should know?" rows="3"></textarea>
+      <button type="submit" class="quote-submit">Submit</button>
+    </form>
+  </div>
+</div>
 
 <!-- FOOTER -->
 <footer>
@@ -507,7 +503,7 @@ footer {
       <li><a href="#process">Process</a></li>
       <li><a href="#pricing">Pricing</a></li>
     </ul>
-    <div class="footer-copy">&copy; 2026 LUCA360°. A Cravin' Adventure Studios Division.</div>
+    <div class="footer-copy">&copy; 2026 LUCA360° - Cravin' Adventure Studios</div>
   </div>
 </footer>
 
@@ -528,15 +524,8 @@ function parallax() {
     const rect = card.getBoundingClientRect();
     if (rect.bottom < 0 || rect.top > vh) return;
     const progress = (rect.top + rect.height / 2) / vh;
-    const img = card.querySelector('img');
-    if (card.classList.contains('pano-card')) {
-      // Horizontal parallax: starts at far left, slides right as you scroll past
-      const hShift = (1 - progress) * -75;
-      img.style.transform = `translateX(${hShift}%)`;
-    } else {
-      const shift = (progress - 0.5) * 20;
-      img.style.transform = `translateY(${shift}%)`;
-    }
+    const shift = (progress - 0.5) * 20;
+    card.querySelector('img').style.transform = `translateY(${shift}%)`;
   });
 }
 window.addEventListener('scroll', parallax, { passive: true });
@@ -553,6 +542,28 @@ function closeMenu() {
   hamburger.classList.remove('open');
   mobileMenu.classList.remove('open');
 }
+
+/* Quote modal */
+const quoteModal = document.getElementById('quoteModal');
+function openQuote() { quoteModal.classList.add('open'); }
+function closeQuote() { quoteModal.classList.remove('open'); }
+quoteModal.addEventListener('click', (e) => { if (e.target === quoteModal) closeQuote(); });
+
+document.getElementById('quoteForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const f = new FormData(this);
+  const business = f.get('business');
+  const subject = encodeURIComponent(business + ' - LUCA360 Quote Inquiry');
+  const body = encodeURIComponent(
+    'Name: ' + f.get('name') + '\n' +
+    'Email: ' + f.get('email') + '\n' +
+    'Phone: ' + (f.get('phone') || 'N/A') + '\n' +
+    'Business: ' + business + '\n' +
+    'Space Size: ' + f.get('size') + '\n' +
+    'Notes: ' + (f.get('message') || 'None')
+  );
+  window.location.href = 'mailto:lucaimmersive@gmail.com?subject=' + subject + '&body=' + body;
+});
 </script>
 </body>
 </html>
