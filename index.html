@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUCA360°</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #000;
+  --amber: #c9863a;
+  --gold: #e8b96a;
+  --white: #faf7f3;
+  --muted: rgba(255,255,255,.4);
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'DM Sans', system-ui, sans-serif;
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--white); font-family: var(--sans); font-weight: 300; line-height: 1.6; overflow-x: hidden; }
+
+/* ═══ NAV ═══ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  height: 60px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2.5rem;
+  background: transparent;
+  transition: background .4s, backdrop-filter .4s;
+}
+nav.scrolled { background: rgba(0,0,0,.85); backdrop-filter: blur(20px); }
+.nav-logo {
+  font-family: var(--serif); font-size: 1.2rem; font-weight: 700;
+  color: var(--white); text-decoration: none; text-transform: uppercase; letter-spacing: .03em;
+}
+.nav-logo span { color: var(--amber); }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a {
+  color: var(--muted); text-decoration: none; font-size: .7rem;
+  letter-spacing: .12em; text-transform: uppercase; transition: color .2s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-cta {
+  background: var(--white); color: var(--bg); padding: .5rem 1.2rem;
+  font-size: .7rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  text-decoration: none; border-radius: 100px; transition: all .2s;
+}
+.nav-cta:hover { background: var(--amber); }
+.hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; }
+.hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); transition: all .3s; }
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(4.5px,4.5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(4.5px,-4.5px); }
+.mobile-menu {
+  display: none; position: fixed; inset: 0; top: 60px;
+  background: rgba(0,0,0,.97); backdrop-filter: blur(20px);
+  flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem; z-index: 490;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a { color: var(--white); text-decoration: none; font-size: 1.6rem; font-family: var(--serif); }
+
+/* ═══ HERO ═══ */
+.hero {
+  position: relative; min-height: 100svh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.hero-pano {
+  position: absolute; inset: 0;
+  background: url('https://pannellum.org/images/bma-1.jpg') center/cover no-repeat;
+  animation: slowDrift 30s linear infinite alternate;
+  filter: brightness(.35) saturate(.7);
+}
+@keyframes slowDrift {
+  0%   { background-position: 0% 50%; transform: scale(1.05); }
+  100% { background-position: 100% 50%; transform: scale(1.1); }
+}
+.hero-fade {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.3) 0%, rgba(0,0,0,.1) 40%, rgba(0,0,0,.6) 80%, #000 100%);
+}
+.hero-content {
+  position: relative; text-align: center; padding: 2rem;
+}
+.hero-logo {
+  font-family: var(--serif); font-weight: 700; text-transform: uppercase;
+  font-size: clamp(4rem, 12vw, 9rem); letter-spacing: .04em;
+  color: var(--white); line-height: .95;
+  opacity: 0; animation: fadeUp .8s .2s ease forwards;
+}
+.hero-logo span { color: var(--amber); }
+.hero-tagline {
+  font-size: clamp(.85rem, 2vw, 1.05rem); color: var(--muted);
+  letter-spacing: .15em; text-transform: uppercase; margin-top: 1rem;
+  opacity: 0; animation: fadeUp .8s .5s ease forwards;
+}
+.scroll-indicator {
+  position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+  width: 1px; height: 50px;
+  background: linear-gradient(to bottom, var(--amber), transparent);
+  animation: pulse 2.5s infinite;
+  opacity: 0; animation: fadeIn 1s 1.2s ease forwards, pulse 2.5s 1.2s infinite;
+}
+
+/* ═══ VERTICALS ═══ */
+.verticals {
+  padding: 6rem 2.5rem;
+}
+.verticals-header {
+  text-align: center; margin-bottom: 3.5rem;
+}
+.verticals-header h2 {
+  font-family: var(--serif); font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 400; color: var(--white);
+}
+.verticals-header h2 em { font-style: italic; color: var(--gold); }
+.vert-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-width: 1200px; margin: 0 auto;
+}
+.vert-card {
+  position: relative; border-radius: 16px; overflow: hidden;
+  aspect-ratio: 4/3; cursor: pointer;
+}
+.vert-card img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .6s cubic-bezier(.25,.8,.25,1), filter .4s;
+  filter: brightness(.55) saturate(.8);
+}
+.vert-card:hover img {
+  transform: scale(1.06);
+  filter: brightness(.7) saturate(1);
+}
+.vert-card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.6) 0%, transparent 50%);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 1.8rem;
+}
+.vert-card h3 {
+  font-family: var(--serif); font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  font-weight: 600; color: var(--white);
+}
+.vert-card p {
+  font-size: .75rem; color: var(--muted); margin-top: .3rem;
+  opacity: 0; transform: translateY(8px);
+  transition: all .3s;
+}
+.vert-card:hover p { opacity: 1; transform: translateY(0); }
+
+/* ═══ HOW IT WORKS ═══ */
+.process {
+  padding: 6rem 2.5rem;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.process-inner {
+  max-width: 1000px; margin: 0 auto; text-align: center;
+}
+.process h2 {
+  font-family: var(--serif); font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 400; margin-bottom: 3.5rem;
+}
+.process h2 em { font-style: italic; color: var(--gold); }
+.process-steps {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+}
+.p-step { text-align: center; }
+.p-step-num {
+  font-family: var(--serif); font-size: 2.5rem; font-weight: 700;
+  color: rgba(201,134,58,.2); line-height: 1; margin-bottom: .8rem;
+}
+.p-step h3 { font-size: .85rem; font-weight: 500; color: var(--white); margin-bottom: .4rem; }
+.p-step p { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+
+/* ═══ PRICING ═══ */
+.pricing {
+  padding: 6rem 2.5rem;
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.pricing-inner { max-width: 1000px; margin: 0 auto; text-align: center; }
+.pricing h2 {
+  font-family: var(--serif); font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 400; margin-bottom: 3.5rem;
+}
+.pricing h2 em { font-style: italic; color: var(--gold); }
+.tier-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.tier {
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
+  border-radius: 16px; padding: 2.5rem 2rem; text-align: left;
+  transition: border-color .3s;
+}
+.tier:hover { border-color: rgba(201,134,58,.3); }
+.tier.featured { border-color: rgba(201,134,58,.4); }
+.tier-badge {
+  display: inline-block; background: var(--amber); color: var(--bg);
+  font-size: .55rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  padding: .25rem .6rem; border-radius: 100px; margin-bottom: 1rem;
+}
+.tier h3 { font-family: var(--serif); font-size: 1.3rem; color: var(--white); margin-bottom: .3rem; }
+.tier-desc { font-size: .8rem; color: var(--muted); margin-bottom: 1.4rem; line-height: 1.6; }
+.tier-features { list-style: none; margin-bottom: 1.8rem; }
+.tier-features li {
+  font-size: .78rem; color: rgba(255,255,255,.65); padding: .4rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  display: flex; align-items: center; gap: .5rem;
+}
+.tier-features li::before { content: '\2713'; color: var(--amber); font-size: .65rem; font-weight: 700; }
+.tier-cta {
+  display: block; text-align: center; padding: .75rem;
+  border: 1px solid rgba(255,255,255,.12); border-radius: 100px;
+  color: var(--white); font-size: .75rem; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase; text-decoration: none;
+  transition: all .2s;
+}
+.tier-cta:hover { border-color: var(--amber); color: var(--amber); }
+.tier.featured .tier-cta { background: var(--amber); color: var(--bg); border-color: var(--amber); }
+.tier.featured .tier-cta:hover { background: var(--gold); }
+
+/* ═══ CTA ═══ */
+.cta-section {
+  padding: 6rem 2.5rem;
+  text-align: center;
+  position: relative;
+}
+.cta-section::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 50% at 50% 80%, rgba(201,134,58,.08) 0%, transparent 70%);
+}
+.cta-section h2 {
+  font-family: var(--serif); font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 400; position: relative; margin-bottom: 1.5rem;
+}
+.cta-section h2 em { font-style: italic; color: var(--gold); }
+.cta-btn {
+  display: inline-block; background: var(--white); color: var(--bg);
+  padding: .85rem 2.5rem; border-radius: 100px;
+  font-size: .8rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  text-decoration: none; transition: all .25s; position: relative;
+}
+.cta-btn:hover { background: var(--amber); transform: translateY(-2px); box-shadow: 0 12px 40px rgba(201,134,58,.25); }
+
+/* ═══ FOOTER ═══ */
+footer {
+  border-top: 1px solid rgba(255,255,255,.06);
+  padding: 3rem 2.5rem 2rem;
+}
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 1rem;
+}
+.footer-brand {
+  font-family: var(--serif); font-size: 1.1rem; font-weight: 700;
+  color: var(--white); text-transform: uppercase;
+}
+.footer-brand span { color: var(--amber); }
+.footer-links { display: flex; gap: 2rem; list-style: none; }
+.footer-links a { color: var(--muted); text-decoration: none; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; transition: color .2s; }
+.footer-links a:hover { color: var(--white); }
+.footer-copy { font-size: .68rem; color: rgba(255,255,255,.2); }
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes pulse { 0%,100% { opacity:.8; } 50% { opacity:.2; } }
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 960px) {
+  .nav-links, .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  .vert-grid { grid-template-columns: 1fr 1fr; }
+  .process-steps { grid-template-columns: repeat(2, 1fr); }
+  .tier-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+}
+@media (max-width: 580px) {
+  .vert-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
+  .process-steps { grid-template-columns: 1fr 1fr; }
+  .hero-logo { font-size: clamp(3rem, 14vw, 5rem); }
+  nav { padding: 0 1.2rem; }
+  .verticals, .process, .pricing, .cta-section { padding: 4rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">LUCA<span>360°</span></a>
+  <ul class="nav-links">
+    <li><a href="#verticals">Industries</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Get a Quote</a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#verticals" onclick="closeMenu()">Industries</a>
+  <a href="#process" onclick="closeMenu()">Process</a>
+  <a href="#pricing" onclick="closeMenu()">Pricing</a>
+  <a href="#cta" onclick="closeMenu()" style="color:var(--amber)">Get a Quote</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-pano"></div>
+  <div class="hero-fade"></div>
+  <div class="hero-content">
+    <h1 class="hero-logo">LUCA<span>360°</span></h1>
+    <p class="hero-tagline">Let people feel your space before they decide</p>
+  </div>
+  <div class="scroll-indicator"></div>
+</section>
+
+<!-- VERTICALS -->
+<section class="verticals" id="verticals">
+  <div class="verticals-header reveal">
+    <h2>What We <em>Capture</em></h2>
+  </div>
+  <div class="vert-grid">
+    <div class="vert-card reveal">
+      <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80" alt="Real Estate">
+      <div class="vert-card-overlay">
+        <h3>Real Estate</h3>
+        <p>Listings that feel like open houses</p>
+      </div>
+    </div>
+    <div class="vert-card reveal">
+      <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&q=80" alt="Airbnb">
+      <div class="vert-card-overlay">
+        <h3>Airbnb & Rentals</h3>
+        <p>Eliminate the gap between photos and reality</p>
+      </div>
+    </div>
+    <div class="vert-card reveal">
+      <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80" alt="Commercial">
+      <div class="vert-card-overlay">
+        <h3>Commercial</h3>
+        <p>Turn online curiosity into foot traffic</p>
+      </div>
+    </div>
+    <div class="vert-card reveal">
+      <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80" alt="Event Venues">
+      <div class="vert-card-overlay">
+        <h3>Event Venues</h3>
+        <p>Remote site visits that close deals</p>
+      </div>
+    </div>
+    <div class="vert-card reveal">
+      <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80" alt="Hotels">
+      <div class="vert-card-overlay">
+        <h3>Hotels</h3>
+        <p>Transparency that drives upgrades</p>
+      </div>
+    </div>
+    <div class="vert-card reveal">
+      <img src="https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=800&q=80" alt="Restaurants & Bars">
+      <div class="vert-card-overlay">
+        <h3>Restaurants & Bars</h3>
+        <p>Step inside before you reserve</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="process-inner">
+    <h2 class="reveal">How It <em>Works</em></h2>
+    <div class="process-steps">
+      <div class="p-step reveal">
+        <div class="p-step-num">01</div>
+        <h3>Schedule</h3>
+        <p>Pick a time. We bring everything.</p>
+      </div>
+      <div class="p-step reveal">
+        <div class="p-step-num">02</div>
+        <h3>Capture</h3>
+        <p>Professional 360° scans of your entire space.</p>
+      </div>
+      <div class="p-step reveal">
+        <div class="p-step-num">03</div>
+        <h3>Build</h3>
+        <p>Stitched, color-corrected, and assembled with hotspots.</p>
+      </div>
+      <div class="p-step reveal">
+        <div class="p-step-num">04</div>
+        <h3>Deliver</h3>
+        <p>One link. Embeds anywhere. Live in 5–7 days.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="pricing-inner">
+    <h2 class="reveal">Simple <em>Pricing</em></h2>
+    <div class="tier-grid">
+      <div class="tier reveal">
+        <h3>Single Space</h3>
+        <p class="tier-desc">One room, one scene. Perfect for a listing or lobby.</p>
+        <ul class="tier-features">
+          <li>1 panoramic scene</li>
+          <li>Info hotspots</li>
+          <li>Embeddable link</li>
+          <li>Mobile optimized</li>
+        </ul>
+        <a href="#cta" class="tier-cta">Get Started</a>
+      </div>
+      <div class="tier featured reveal">
+        <span class="tier-badge">Most Popular</span>
+        <h3>Multi-Space</h3>
+        <p class="tier-desc">Full walkthrough with room-to-room navigation.</p>
+        <ul class="tier-features">
+          <li>3–6 connected scenes</li>
+          <li>Floor-arrow navigation</li>
+          <li>Scene breadcrumbs</li>
+          <li>Compass & zoom</li>
+          <li>Priority processing</li>
+        </ul>
+        <a href="#cta" class="tier-cta">Get Started</a>
+      </div>
+      <div class="tier reveal">
+        <h3>Full Property</h3>
+        <p class="tier-desc">Unlimited scenes. Hotels, estates, large venues.</p>
+        <ul class="tier-features">
+          <li>Unlimited scenes</li>
+          <li>Custom branding</li>
+          <li>Full walkthrough</li>
+          <li>Dedicated manager</li>
+        </ul>
+        <a href="#cta" class="tier-cta">Get a Quote</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="cta">
+  <h2>Ready to let people<br><em>step inside</em>?</h2>
+  <a href="mailto:hello@luca360.com" class="cta-btn">Get a Quote</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">LUCA<span>360°</span></div>
+    <ul class="footer-links">
+      <li><a href="#verticals">Industries</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+    <div class="footer-copy">&copy; 2026 LUCA360°. A Cravin' Adventure Studios Division.</div>
+  </div>
+</footer>
+
+<script>
+/* Nav scroll */
+window.addEventListener('scroll', () => {
+  document.querySelector('nav').classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+/* Mobile menu */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  mobileMenu.classList.toggle('open');
+});
+function closeMenu() {
+  hamburger.classList.remove('open');
+  mobileMenu.classList.remove('open');
+}
+
+/* Reveal on scroll */
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
