@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LUCA360°</title>
-<style>
-@font-face { font-family: 'Gilroy'; src: url('https://fonts.cdnfonts.com/css/gilroy-bold') format('woff2'); font-weight: 700; font-style: normal; }
-</style>
 <link href="https://fonts.cdnfonts.com/css/gilroy-bold" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css">
+<script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
@@ -17,36 +16,74 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── FULLSCREEN CONTAINER ── */
-.page {
-  position: fixed; inset: 0;
+/* ── PANORAMA ── */
+#pano {
+  position: fixed; inset: 0; z-index: 0;
+}
+#pano::after {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  background: rgba(0,0,0,.45);
+  pointer-events: none;
+}
+/* Hide Pannellum default UI */
+.pnlm-controls-container, .pnlm-load-button, .pnlm-about-msg,
+.pnlm-error-msg, .pnlm-load-box, .pnlm-compass { display: none !important; }
+
+/* ── HAMBURGER ── */
+.hamburger {
+  position: fixed; top: 1.2rem; right: 1.2rem; z-index: 99999;
+  background: none; border: none; cursor: pointer; padding: 8px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.hamburger span {
+  display: block; width: 24px; height: 2px;
+  background: #f5f5f7; border-radius: 2px;
+  transition: all .3s;
+}
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* ── MENU PANEL ── */
+.menu {
+  position: fixed; inset: 0; z-index: 9998;
+  background: rgba(0,0,0,.88); backdrop-filter: blur(30px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 0;
+  opacity: 0; pointer-events: none; transition: opacity .3s;
+}
+.menu.open { opacity: 1; pointer-events: auto; }
+.menu-item {
+  background: none; border: none; color: rgba(255,255,255,.5);
+  font-family: inherit; font-size: 1.3rem; font-weight: 500;
+  padding: 1rem 2rem; cursor: pointer;
+  transition: color .2s;
+  width: 100%; text-align: center;
+}
+.menu-item:hover { color: #f5f5f7; }
+.menu-item.active { color: #f5f5f7; }
+
+/* ── CONTENT OVERLAY ── */
+.content {
+  position: fixed; inset: 0; z-index: 10;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  text-align: center;
-  padding: 2rem;
+  text-align: center; padding: 2rem;
+  pointer-events: none;
+  transition: opacity .3s;
 }
-
-/* ── BACKGROUND IMAGES ── */
-.bg { position: absolute; inset: 0; z-index: 0; }
-.bg img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%; object-fit: cover;
-  filter: brightness(.3) saturate(.6);
-  opacity: 0; transition: opacity 1.5s ease;
-}
-.bg img.active { opacity: 1; }
-
-/* ── CONTENT ── */
-.content { position: relative; z-index: 1; transition: opacity .3s; }
+.content > * { pointer-events: auto; }
 .title {
   font-size: clamp(2.8rem, 9vw, 5.5rem);
   font-weight: 800; letter-spacing: -.02em;
   line-height: 1;
+  text-shadow: 0 2px 40px rgba(0,0,0,.5);
 }
 .tagline {
   font-size: clamp(1rem, 2.5vw, 1.3rem);
   font-weight: 500; color: rgba(255,255,255,.7);
   margin-top: .6rem;
+  text-shadow: 0 1px 20px rgba(0,0,0,.5);
 }
 .cta {
   display: inline-block; margin-top: 1rem;
@@ -59,26 +96,23 @@ body {
 }
 .cta:hover { background: #c9863a; }
 
-/* ── DOTS ── */
-.dots {
-  position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 8px; z-index: 1;
+/* ── CURRENT LABEL ── */
+.current-label {
+  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+  font-size: .7rem; font-weight: 400; letter-spacing: .1em;
+  color: rgba(255,255,255,.35); z-index: 10;
+  transition: opacity .5s;
+  text-transform: uppercase;
 }
-.dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: rgba(255,255,255,.25);
-  transition: background .4s, transform .4s;
-}
-.dot.active { background: rgba(255,255,255,.9); transform: scale(1.3); }
 
-/* ── LABEL ── */
-.label {
-  position: absolute; bottom: 3.5rem; left: 50%; transform: translateX(-50%);
-  font-size: .7rem; font-weight: 300; letter-spacing: .08em;
-  color: rgba(255,255,255,.4); white-space: nowrap;
-  z-index: 1;
-  transition: opacity .6s;
+/* ── GYRO PROMPT ── */
+.gyro-prompt {
+  position: fixed; bottom: 3.5rem; left: 50%; transform: translateX(-50%);
+  font-size: .65rem; color: rgba(255,255,255,.25); z-index: 10;
+  letter-spacing: .06em;
+  animation: fadeInOut 4s ease forwards;
 }
+@keyframes fadeInOut { 0% { opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
 
 /* ── QUOTE MODAL ── */
 .modal-overlay {
@@ -141,28 +175,33 @@ body {
 </head>
 <body>
 
-<div class="page">
-  <!-- BACKGROUNDS -->
-  <div class="bg">
-    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80" alt="Real Estate" class="active">
-    <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80" alt="Airbnb & Rentals">
-    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&q=80" alt="Commercial">
-    <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=1200&q=80" alt="Event Venues">
-    <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&q=80" alt="Hotels">
-    <img src="https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=1200&q=80" alt="Restaurants & Bars">
-  </div>
+<!-- 360° PANORAMA VIEWER -->
+<div id="pano"></div>
 
-  <!-- CONTENT -->
-  <div class="content">
-    <h1 class="title">LUCA360°</h1>
-    <p class="tagline">Immersive tours for every space.</p>
-    <a class="cta" id="openQuote">Get a Quote</a>
-  </div>
+<!-- HAMBURGER -->
+<button class="hamburger" id="hamburger">
+  <span></span><span></span><span></span>
+</button>
 
-  <!-- LABEL + DOTS -->
-  <div class="label" id="label">Real Estate</div>
-  <div class="dots" id="dots"></div>
+<!-- MENU -->
+<div class="menu" id="menu">
+  <button class="menu-item active" data-index="0">Real Estate</button>
+  <button class="menu-item" data-index="1">Airbnb & Rentals</button>
+  <button class="menu-item" data-index="2">Commercial</button>
+  <button class="menu-item" data-index="3">Event Venues</button>
+  <button class="menu-item" data-index="4">Hotels</button>
+  <button class="menu-item" data-index="5">Restaurants & Bars</button>
 </div>
+
+<!-- CONTENT -->
+<div class="content" id="content">
+  <h1 class="title">LUCA360°</h1>
+  <p class="tagline">Immersive tours for every space.</p>
+  <a class="cta" id="openQuote">Get a Quote</a>
+</div>
+
+<!-- CURRENT LABEL -->
+<div class="current-label" id="label">Real Estate</div>
 
 <!-- QUOTE MODAL -->
 <div class="modal-overlay" id="overlay">
@@ -188,44 +227,111 @@ body {
           <option>Other</option>
         </select>
       </div>
-      <div class="field"><textarea name="message" placeholder="Tell us about your project..."></textarea></div>
+      <div class="field"><textarea name="message" placeholder="Tell us about your project..." required></textarea></div>
       <button type="submit" class="submit">Submit</button>
     </form>
   </div>
 </div>
 
 <script>
-const images = document.querySelectorAll('.bg img');
-const labels = [...images].map(img => img.alt);
-const dotsEl = document.getElementById('dots');
-const labelEl = document.getElementById('label');
+// 360° scenes — equirectangular panoramas
+const scenes = [
+  { name: 'Real Estate',        image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/small_empty_house.jpg', pitch: 0, yaw: 120 },
+  { name: 'Airbnb & Rentals',   image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/lythwood_room.jpg', pitch: -5, yaw: 0 },
+  { name: 'Commercial',         image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/artist_workshop.jpg', pitch: 0, yaw: 240 },
+  { name: 'Event Venues',       image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/ballroom.jpg', pitch: 10, yaw: 90 },
+  { name: 'Hotels',             image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/hotel_room.jpg', pitch: 0, yaw: 30 },
+  { name: 'Restaurants & Bars', image: 'https://dl.polyhaven.org/file/ph-assets/HDRIs/extra/Tonemapped%20JPG/st_fagans_interior.jpg', pitch: -10, yaw: 180 },
+];
+
 let current = 0;
+let viewer = null;
 
-// Build dots
-labels.forEach((_, i) => {
-  const d = document.createElement('div');
-  d.className = 'dot' + (i === 0 ? ' active' : '');
-  dotsEl.appendChild(d);
-});
-const dots = dotsEl.querySelectorAll('.dot');
-
-function goTo(i) {
-  images[current].classList.remove('active');
-  dots[current].classList.remove('active');
-  current = i;
-  images[current].classList.add('active');
-  dots[current].classList.add('active');
-  labelEl.style.opacity = '0';
-  setTimeout(() => { labelEl.textContent = labels[current]; labelEl.style.opacity = '1'; }, 300);
+function initViewer(i) {
+  const s = scenes[i];
+  if (viewer) viewer.destroy();
+  viewer = pannellum.viewer('pano', {
+    type: 'equirectangular',
+    panorama: s.image,
+    autoLoad: true,
+    showControls: false,
+    compass: false,
+    mouseZoom: false,
+    keyboardZoom: false,
+    disableKeyboardCtrl: true,
+    hfov: 110,
+    pitch: s.pitch,
+    yaw: s.yaw,
+    autoRotate: -1.5,
+    autoRotateInactivityDelay: 100,
+    orientationOnByDefault: true,
+    friction: 0.15,
+  });
+  // Update label
+  const label = document.getElementById('label');
+  label.style.opacity = '0';
+  setTimeout(() => { label.textContent = s.name; label.style.opacity = '1'; }, 300);
 }
 
-setInterval(() => goTo((current + 1) % images.length), 4000);
+initViewer(0);
+
+// Hamburger menu
+const hamburger = document.getElementById('hamburger');
+const menu = document.getElementById('menu');
+const menuItems = document.querySelectorAll('.menu-item');
+const contentEl = document.getElementById('content');
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  menu.classList.toggle('open');
+});
+
+menuItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const idx = parseInt(item.dataset.index);
+    if (idx === current) {
+      hamburger.classList.remove('open');
+      menu.classList.remove('open');
+      return;
+    }
+    menuItems[current].classList.remove('active');
+    item.classList.add('active');
+    current = idx;
+    initViewer(idx);
+    hamburger.classList.remove('open');
+    menu.classList.remove('open');
+  });
+});
+
+// Gyro prompt on mobile
+if ('DeviceOrientationEvent' in window) {
+  const prompt = document.createElement('div');
+  prompt.className = 'gyro-prompt';
+  prompt.textContent = 'Move your phone to look around';
+  document.body.appendChild(prompt);
+
+  // iOS 13+ requires permission
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    document.addEventListener('click', function enableGyro() {
+      DeviceOrientationEvent.requestPermission().then(r => {
+        if (r === 'granted' && viewer) viewer.startOrientation();
+      }).catch(() => {});
+      document.removeEventListener('click', enableGyro);
+    }, { once: true });
+  }
+}
 
 // Modal
 const overlay = document.getElementById('overlay');
-const content = document.querySelector('.content');
-document.getElementById('openQuote').addEventListener('click', e => { e.preventDefault(); overlay.classList.add('open'); content.style.opacity = '0'; });
-function closeModal() { overlay.classList.remove('open'); content.style.opacity = '1'; }
+document.getElementById('openQuote').addEventListener('click', e => {
+  e.preventDefault();
+  overlay.classList.add('open');
+  contentEl.style.opacity = '0';
+});
+function closeModal() {
+  overlay.classList.remove('open');
+  contentEl.style.opacity = '1';
+}
 document.getElementById('closeQuote').addEventListener('click', closeModal);
 overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 </script>
