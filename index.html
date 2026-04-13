@@ -67,15 +67,18 @@ nav {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   overflow: hidden;
 }
-.hero-pano {
-  position: absolute; inset: 0;
-  background: url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80') center/cover no-repeat;
-  animation: slowDrift 40s linear infinite alternate;
-  filter: brightness(.25) saturate(.5);
+.hero-video {
+  position: absolute; inset: 0; overflow: hidden;
 }
-@keyframes slowDrift {
-  0%   { background-position: 0% 50%; transform: scale(1.05); }
-  100% { background-position: 100% 50%; transform: scale(1.12); }
+.hero-video iframe {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 177.78vh; /* 16:9 aspect fill */
+  height: 100vh;
+  min-width: 100%; min-height: 100%;
+  transform: translate(-50%, -50%);
+  border: none;
+  pointer-events: none;
 }
 .hero-fade {
   position: absolute; inset: 0;
@@ -336,7 +339,13 @@ footer {
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-pano"></div>
+  <div class="hero-video">
+    <iframe
+      src="https://player.vimeo.com/video/1059495438?background=1&autoplay=1&loop=1&muted=1&quality=1080p"
+      allow="autoplay; fullscreen"
+      loading="eager">
+    </iframe>
+  </div>
   <div class="hero-fade"></div>
   <div class="hero-content">
     <h1 class="hero-logo">LUCA<span>360°</span></h1>
