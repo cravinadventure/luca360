@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "luca360",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8360", "--directory", "/Users/mitchelledwards/Projects/luca360"],
+      "port": 8360
+    }
+  ]
+}
